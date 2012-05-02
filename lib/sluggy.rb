@@ -23,7 +23,7 @@ module Sluggy
 
     def generate_slug
       if send(slug_column).blank?
-        slug = send(slug_base).to_s.downcase.strip.gsub(/[^a-z0-9\s\-\_]/, '').gsub(/\s+/, '-')
+        slug = send(slug_base).to_s.downcase.gsub(/[^a-z0-9\s\-\_]/, '').strip.gsub(/\s+/, '-')
 
         exists = self.class.where("#{slug_column} = ? OR #{slug_column} LIKE ?", slug, "#{slug}--%")
         exists = exists.where('id != ?', id) unless new_record?
