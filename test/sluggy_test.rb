@@ -1,9 +1,12 @@
 require 'test_helper'
 
 class SluggyDefaultsTest < Test::Unit::TestCase
+  class Post < ActiveRecord::Base
+    slug_for :title
+  end
+
   def setup
     Post.delete_all
-    Post.send(:slug_for, :title)
     Post.create!(:title => 'First Post')
   end
 
@@ -42,9 +45,12 @@ class SluggyDefaultsTest < Test::Unit::TestCase
 end
 
 class SluggyWithOptionsTest < Test::Unit::TestCase
+  class User < ActiveRecord::Base
+    slug_for :name, {:column => :handle, :scope => :account_id}
+  end
+
   def setup
     User.delete_all
-    User.send(:slug_for, :name, {:column => :handle, :scope => :account_id})
     User.create!(:name => 'Ary Djmal', :account_id => 1)
   end
 
@@ -79,5 +85,23 @@ class SluggyWithOptionsTest < Test::Unit::TestCase
     assert_equal('ary-djmal--1', user.reload.handle)
     user.update_attributes(:handle => 'ary-djmal')
     assert_equal('ary-djmal--1', user.reload.handle)
+  end
+end
+
+class SluggyWithScopeArrayTest < Test::Unit::TestCase
+  class User < ActiveRecord::Base
+    slug_for :name, {:column => :handle, :scope => [:account_id, :deleted]}
+  end
+
+  def setup
+    User.delete_all
+    User.create!(:name => 'Ary Djmal', :account_id => 1)
+  end
+
+  def test_with_same_name
+    user = User.create!(:name => 'Ary Djmal', :account_id => 1)
+    assert_equal('ary-djmal--1', user.handle)
+    user = User.create!(:name => 'Ary Djmal', :account_id => 1, :deleted => true)
+    assert_equal('ary-djmal', user.handle)
   end
 end

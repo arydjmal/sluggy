@@ -27,11 +27,15 @@ module Sluggy
 
         exists = self.class.where("#{slug_column} = ? OR #{slug_column} LIKE ?", slug, "#{slug}--%")
         exists = exists.where('id != ?', id) unless new_record?
-        exists = exists.where("#{slug_scope} = ?", send(slug_scope)) if slug_scope
+        if slug_scope
+          Array(slug_scope).each do |sc|
+            exists = exists.where("#{sc} = ?", send(sc))
+          end
+        end
         exists = exists.order("LENGTH(#{slug_column}) DESC, #{slug_column} DESC")
 
         if conflict = exists.first
-          last_number =  conflict.send(slug_column).gsub(/^#{Regexp.quote(slug)}--/, '').to_i
+          last_number = conflict.send(slug_column).gsub(/^#{Regexp.quote(slug)}--/, '').to_i
           slug << "--#{last_number+1}"
         end
 

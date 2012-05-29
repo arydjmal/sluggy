@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'sluggy'
-  s.version     = '0.1.1'
+  s.version     = '0.1.2'
   s.authors     = ['Ary Djmal']
   s.email       = ['arydjmal@gmail.com']
   s.summary     = 'Minimal slugging/permalink gem for ActiveRecord. Nothing fancy.'

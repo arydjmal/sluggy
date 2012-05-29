@@ -15,11 +15,6 @@ ActiveRecord::Schema.define do
   create_table :users do |t|
     t.string  :name, :handle
     t.integer :account_id
+    t.boolean :deleted, :default => false
   end
-end
-
-class Post < ActiveRecord::Base
-end
-
-class User < ActiveRecord::Base
 end
